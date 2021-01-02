@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	lumberjack "gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/yakushou730/blog-service/pkg/logger"
+
 	"github.com/yakushou730/blog-service/internal/model"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +26,11 @@ func init() {
 	if err != nil {
 		log.Fatalf("init.setupDBEngine err: %v", err)
 	}
+	err = setupLogger()
+	if err != nil {
+		log.Fatalf("init.setupLogger err: %v", err)
+	}
+
 }
 
 func main() {
@@ -34,6 +43,8 @@ func main() {
 		ReadHeaderTimeout: global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes:    1 << 20,
 	}
+
+	global.Logger.Infof("%s: go-programming-tour-book/%s", "yakushou730", "blog-service")
 
 	s.ListenAndServe()
 }
@@ -67,5 +78,17 @@ func setupDBEngine() error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func setupLogger() error {
+	fileName := global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt
+	global.Logger = logger.NewLogger(&lumberjack.Logger{
+		Filename:  fileName,
+		MaxSize:   600,
+		MaxAge:    10,
+		LocalTime: true,
+	}, "", log.LstdFlags).WithCaller(2)
+
 	return nil
 }
