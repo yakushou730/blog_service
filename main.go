@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/yakushou730/blog-service/internal/model"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yakushou730/blog-service/global"
 	"github.com/yakushou730/blog-service/internal/routers"
@@ -15,6 +17,10 @@ func init() {
 	err := SetupSetting()
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
+	}
+	err = setupDBEngine()
+	if err != nil {
+		log.Fatalf("init.setupDBEngine err: %v", err)
 	}
 }
 
@@ -52,5 +58,14 @@ func SetupSetting() error {
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
 
+	return nil
+}
+
+func setupDBEngine() error {
+	var err error
+	global.DBEngine, err = model.NewDBEngine(global.DatabaseSetting)
+	if err != nil {
+		return err
+	}
 	return nil
 }
