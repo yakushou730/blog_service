@@ -33,6 +33,10 @@ func init() {
 
 }
 
+// @title 部落格系統
+// @version 1.0
+// @description Go 語言程式設計之旅：一起用 Go 做專案
+// @termsOfService https://gihub.com/go-programming-tour-book
 func main() {
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()

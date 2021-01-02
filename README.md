@@ -53,3 +53,8 @@ CREATE TABLE `blog_article_tag` (
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章標籤連結';
 ```
+
+swagger 使用
+```
+$ swag init
+```
