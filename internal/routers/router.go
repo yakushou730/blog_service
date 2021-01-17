@@ -3,6 +3,8 @@ package routers
 import (
 	"net/http"
 
+	"github.com/yakushou730/blog-service/internal/routers/api"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/yakushou730/blog-service/global"
@@ -26,8 +28,10 @@ func NewRouter() *gin.Engine {
 	upload := NewUpload()
 	r.POST("upload/file", upload.UploadFile)
 	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
+	r.GET("/auth", api.GetAuth)
 
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(middleware.JWT())
 	{
 		apiv1.POST("/tags", tag.Create)
 		apiv1.DELETE("/tags/:id", tag.Delete)
