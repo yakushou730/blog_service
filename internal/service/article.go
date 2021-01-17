@@ -1,13 +1,9 @@
 package service
 
-//type Article struct {
-//	*Model
-//	Title         string `json:"title"`
-//	Desc          string `json:"desc"`
-//	Content       string `json:"content"`
-//	CoverImageUrl string `json:"cover_image_url"`
-//	State         uint8  `json:"state"`
-//}
+import (
+	"github.com/yakushou730/blog-service/internal/model"
+	"github.com/yakushou730/blog-service/pkg/app"
+)
 
 type CountArticleRequest struct {
 	Title         string `form:"title" binding:"max=100"`
@@ -17,7 +13,7 @@ type CountArticleRequest struct {
 	State         uint8  `form:"state,default=1" binding:"oneof=0 1"`
 }
 
-type TagArticleRequest struct {
+type ArticleListRequest struct {
 	Title         string `form:"title" binding:"max=100"`
 	Desc          string `form:"desc" binding:"max=100"`
 	Content       string `form:"content" binding:"max=100"`
@@ -46,4 +42,24 @@ type UpdateArticleRequest struct {
 
 type DeleteArticleRequest struct {
 	ID uint32 `form:"id" binding:"required,gte=1"`
+}
+
+func (svc *Service) CountArticle(param *CountArticleRequest) (int, error) {
+	return svc.dao.CountArticle(param.Title, param.State)
+}
+
+func (svc *Service) GetArticleList(param *ArticleListRequest, pager *app.Pager) ([]*model.Article, error) {
+	return svc.dao.GetArticleList(param.Title, param.State, pager.Page, pager.PageSize)
+}
+
+func (svc *Service) CreateArticle(param *CreateArticleRequest) error {
+	return svc.dao.CreateArticle(param.Title, param.State, param.CreatedBy)
+}
+
+func (svc *Service) UpdateArticle(param *UpdateArticleRequest) error {
+	return svc.dao.UpdateArticle(param.ID, param.Title, param.State, param.ModifiedBy)
+}
+
+func (svc *Service) DeleteArticle(param *DeleteArticleRequest) error {
+	return svc.dao.DeleteArticle(param.ID)
 }
